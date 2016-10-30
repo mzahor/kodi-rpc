@@ -12,8 +12,9 @@ module.exports = function(fetch) {
     });
   }
 
-  function Kodi(ip, port) {
+  function Kodi(ip, port, credentials) {
     this.url = 'http://' + ip + ':' + port + '/jsonrpc';
+    this.credentials = credentials;
     addMethods(this);
   }
 
@@ -22,6 +23,11 @@ module.exports = function(fetch) {
       "Content-type": "application/json",
       'Accept': "application/json"
     };
+
+    if (this.credentials) {
+      var {username, password} = this.credentials;
+      headers['Authorization'] = `Basic ${new Buffer(`${username}:${password}`).toString()}`;
+    }
 
     return fetch(this.url, {
         method: 'POST',
